@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FFF7FA" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Booze Control" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Booze Control</title>
+</head>
+<body>
+  <div class="bg" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span><span class="blob b5"></span>
+    <span class="float f1">🍸</span><span class="float f2">✨</span><span class="float f3">🥃</span><span class="float f4">🍒</span><span class="float f5">🥂</span><span class="float f6">💫</span>
+  </div>
+
+  <main id="app">
+    <section id="home" class="screen active">
+      <header class="hero">
+        <h1>Booze Control</h1>
+        <p>pretty tracking, not preachy tracking</p>
+      </header>
+
+      <section class="staged-card card">
+        <div class="accent-line"></div>
+        <div class="eyebrow">STAGED FOR TODAY</div>
+        <div id="stagedCount" class="big-count">Staged · 0 drinks</div>
+        <div id="submittedCount" class="submitted">Submitted today · 0 drinks</div>
+        <div class="helper">Tap a bubble to remove one mistaken or spilled drink</div>
+        <div id="stagedList" class="pill-scroll"></div>
+        <button id="submitBtn" class="submit-btn" disabled>SUBMIT DRINKS FOR THE DAY</button>
+      </section>
+
+      <section class="add-section">
+        <div class="section-title">OTHER DRINK</div>
+        <div class="other-row">
+          <input id="otherInput" autocomplete="off" inputmode="text" placeholder="What are you drinking?" />
+          <button id="otherAdd" aria-label="Add other drink">+</button>
+        </div>
+      </section>
+
+      <section class="quick-section">
+        <div class="section-title">QUICK ADD</div>
+        <div class="quick-grid">
+          <button class="quick-card" data-drink="O-Bomb"><span class="icon pink">🍹</span><strong>O-Bomb</strong><small>bomb shot</small></button>
+          <button class="quick-card" data-drink="Bacardi Shot"><span class="icon gold">🥃</span><strong>Bacardi Shot</strong><small>flavored shot</small></button>
+          <button class="quick-card" data-drink="Suncruiser"><span class="icon blue">☀️</span><strong>Suncruiser</strong><small>vodka tea seltzer</small></button>
+          <button class="quick-card" data-drink="Rum & Coke"><span class="icon lavender">🥤</span><strong>Rum & Coke</strong><small>classic mixer</small></button>
+        </div>
+      </section>
+    </section>
+
+    <section id="calendar" class="screen">
+      <header class="calendar-head">
+        <div class="eyebrow">CALENDAR</div>
+        <div class="month-row"><button id="prevMonth" class="circle-btn">‹</button><h2 id="monthTitle">September 2026</h2><button id="nextMonth" class="circle-btn">›</button></div>
+      </header>
+      <div class="weekday-row"><span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span></div>
+      <div id="calendarGrid" class="calendar-grid card"></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button id="homeTab" class="active">● Home</button>
+    <button id="calendarTab">Calendar</button>
+  </nav>
+
+  <div id="detailOverlay" class="overlay" aria-hidden="true">
+    <div class="detail-sheet card">
+      <button id="closeDetail" class="close-btn">×</button>
+      <h3 id="detailDate">September 1</h3>
+      <p class="helper">Tap a bubble to remove one drink</p>
+      <div id="detailList" class="pill-scroll detail-scroll"></div>
+      <div id="detailTotal" class="detail-total">0 drinks</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Added ✓</div>
+  <script src="app.js"></script>
+</body>
+</html>
