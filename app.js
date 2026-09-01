@@ -17,13 +17,11 @@ function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function pad(n){return String(n).padStart(2,'0')}
 function fmt(n){return Number.isInteger(n)?String(n):n.toFixed(1).replace(/\.0$/,'')}
 function trackingDay(d=new Date()){const x=new Date(d.getTime()-4*3600000);return `${x.getFullYear()}-${pad(x.getMonth()+1)}-${pad(x.getDate())}`}
-function resetWarningIfNeeded(){const cur=trackingDay();if(state.warningDay&&state.warningDay!==cur){state.warningDay='';save()}}
 function committedUnits(day){return state.entries.filter(e=>e.day===day).reduce((s,e)=>s+(Number(e.amount)||1),0)}
 function stagedUnits(){return (state.staged?.drinks||[]).reduce((s,d)=>s+(Number(d.amount)||1),0)}
-function maybeLatchWarning(){const day=trackingDay();if(committedUnits(day)+stagedUnits()>=8&&!state.warningDay){state.warningDay=day;save()}}
-function warningActive(){resetWarningIfNeeded();return state.warningDay===trackingDay()}
-function autoSubmit(){resetWarningIfNeeded();if(!state.staged?.drinks?.length)return;const cur=trackingDay();if(state.staged.day&&state.staged.day<cur) commitStaged(state.staged.day)}
-function stage(name,amount=1){autoSubmit();name=name.trim();amount=Number(amount)||1;if(!name||amount<=0)return;const day=trackingDay();if(state.staged.drinks.length&&state.staged.day!==day)commitStaged(state.staged.day);if(!state.staged.drinks.length)state.staged.day=day;state.staged.drinks.push({name,amount});maybeLatchWarning();save();render();toast(amount)}
+function warningActive(){const day=trackingDay();return committedUnits(day)+stagedUnits()>=8}
+function autoSubmit(){if(!state.staged?.drinks?.length)return;const cur=trackingDay();if(state.staged.day&&state.staged.day<cur) commitStaged(state.staged.day)}
+function stage(name,amount=1){autoSubmit();name=name.trim();amount=Number(amount)||1;if(!name||amount<=0)return;const day=trackingDay();if(state.staged.drinks.length&&state.staged.day!==day)commitStaged(state.staged.day);if(!state.staged.drinks.length)state.staged.day=day;state.staged.drinks.push({name,amount});save();render();toast(amount)}
 function commitStaged(day=state.staged.day||trackingDay()){if(!state.staged.drinks.length)return;state.staged.drinks.forEach((d,i)=>state.entries.push({id:crypto.randomUUID?.()||`${Date.now()}-${i}`,name:d.name,amount:Number(d.amount)||1,day}));state.staged={day:'',drinks:[]};save();render()}
 function removeStaged(name){for(let i=state.staged.drinks.length-1;i>=0;i--){if(state.staged.drinks[i].name.toLowerCase()===name.toLowerCase()){state.staged.drinks.splice(i,1);break}}if(!state.staged.drinks.length)state.staged.day='';save();render()}
 function removeCommitted(day,name){for(let i=state.entries.length-1;i>=0;i--){if(state.entries[i].day===day&&state.entries[i].name.toLowerCase()===name.toLowerCase()){state.entries.splice(i,1);break}}save();render();if(selectedDay)openDetail(selectedDay)}
@@ -35,7 +33,6 @@ function grouped(list){
 function countDay(day){return committedUnits(day)}
 function renderWarning(){const banner=$('#bacWarning');if(!banner)return;banner.classList.toggle('show',warningActive())}
 function renderHome(){
-  maybeLatchWarning();
   const sc=stagedUnits(),submitted=countDay(trackingDay());
   $('#stagedCount').textContent=`Staged · ${fmt(sc)} ${sc===1?'drink':'drinks'}`;
   $('#submittedCount').textContent=`Submitted today · ${fmt(submitted)} ${submitted===1?'drink':'drinks'}`;

@@ -11,3 +11,8 @@ Changes
 
 GitHub Pages update
 Upload/replace index.html, styles.css, app.js, sw.js, manifest.json, and the icons folder in the existing repository root, then commit the changes.
+
+Final warning update:
+- The HIGH BAC RISK banner is now live rather than latched.
+- It appears at 8.0+ current-day drink-equivalents and disappears immediately if current-day entries are removed below 8.0.
+- It reappears if the current-day total reaches 8.0 again.
