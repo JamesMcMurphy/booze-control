@@ -25,6 +25,11 @@
         <p>pretty tracking, not preachy tracking</p>
       </header>
 
+      <div id="bacWarning" class="bac-warning" role="alert">
+        <strong>HIGH BAC RISK</strong>
+        <span>8+ drink-equivalents logged today. BAC varies by person and timing—this is a risk alert, not a BAC estimate.</span>
+      </div>
+
       <section class="staged-card card">
         <div class="accent-line"></div>
         <div class="eyebrow">STAGED FOR TODAY</div>
@@ -47,7 +52,10 @@
         <div class="section-title">QUICK ADD</div>
         <div class="quick-grid">
           <button class="quick-card" data-drink="O-Bomb"><span class="icon pink">🍹</span><strong>O-Bomb</strong><small>bomb shot</small></button>
-          <button class="quick-card" data-drink="Bacardi Shot"><span class="icon gold">🥃</span><strong>Bacardi Shot</strong><small>flavored shot</small></button>
+          <div class="quick-card bacardi-card" aria-label="Bacardi shot options">
+            <button id="bacardiFull" class="bacardi-option" type="button"><span class="icon gold">🥃</span><strong>Bacardi</strong><small>1 shot</small></button>
+            <button id="bacardiHalf" class="bacardi-option half" type="button"><span class="half-icon">½</span><strong>Bacardi</strong><small>half shot</small></button>
+          </div>
           <button class="quick-card" data-drink="Suncruiser"><span class="icon blue">☀️</span><strong>Suncruiser</strong><small>vodka tea seltzer</small></button>
           <button class="quick-card" data-drink="Rum & Coke"><span class="icon lavender">🥤</span><strong>Rum & Coke</strong><small>classic mixer</small></button>
         </div>
