@@ -10,7 +10,7 @@ button,input{font:inherit}.bg{position:fixed;inset:0;overflow:hidden;pointer-eve
 .bac-warning strong{display:block;font-size:15px;letter-spacing:.8px}.bac-warning span{display:block;font-size:11px;line-height:1.35;margin-top:4px;opacity:.92}
 @keyframes warningIn{from{opacity:0;transform:translateY(-8px) scale(.98)}}
 
-.bacardi-card{padding:0;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;align-items:stretch;justify-content:stretch}
+.bacardi-card,.rumple-card{padding:0;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;align-items:stretch;justify-content:stretch}
 .bacardi-option{border:0;background:rgba(255,248,232,.42);display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--ink);padding:10px 6px}.bacardi-option.half{border-left:1px solid rgba(217,164,65,.20);background:linear-gradient(180deg,rgba(255,239,209,.58),rgba(255,249,238,.72))}
 .bacardi-option strong{font-size:15px;font-weight:600;margin-top:3px}.bacardi-option small{font-size:11px;color:rgba(41,28,39,.38)}.bacardi-option:active{background:rgba(217,164,65,.16)}
 .half-icon{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;font-size:26px;font-weight:900;color:#8b641b;background:#fff1ce;border:2px solid rgba(217,164,65,.32)}
@@ -20,3 +20,5 @@ button,input{font:inherit}.bg{position:fixed;inset:0;overflow:hidden;pointer-eve
 .mint-half{background:#e4fbf4;border-color:rgba(149,232,215,.42);color:#3d8171}
 
 .quick-carousel .quick-card,.quick-carousel .bacardi-option{touch-action:pan-x}
+
+.rumple-card>.bacardi-option{width:100%;height:100%;min-width:0}

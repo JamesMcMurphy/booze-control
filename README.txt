@@ -32,3 +32,8 @@ Update v6
 - Renamed More to Staples.
 - Tightened spacing between the swipe hint and cards.
 - Keeps the existing localStorage key so calendar and staged data survive normal GitHub Pages updates.
+
+
+Update v7
+- Fixed Rumple full/half card on GitHub Pages so both options render horizontally, matching Bacardi.
+- Bumped the service-worker cache so the layout fix is picked up reliably.
