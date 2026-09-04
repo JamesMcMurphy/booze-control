@@ -16,3 +16,19 @@ Final warning update:
 - The HIGH BAC RISK banner is now live rather than latched.
 - It appears at 8.0+ current-day drink-equivalents and disappears immediately if current-day entries are removed below 8.0.
 - It reappears if the current-day total reaches 8.0 again.
+
+
+Update v5
+- Added Rumple split quick add with full and half-shot buttons.
+- Added Long Drink, Key Lime Pie Shot, and TWEA quick add cards.
+
+- Moved the 4 extra drinks to a swipeable second quick-add page.
+- Added favorite-page support so either quick-add page can open first on launch.
+- Updated Long Drink with a better icon/logo treatment.
+
+
+Update v6
+- Fixed Quick Add swipe so swiping the cards changes the active tab.
+- Renamed More to Staples.
+- Tightened spacing between the swipe hint and cards.
+- Keeps the existing localStorage key so calendar and staged data survive normal GitHub Pages updates.

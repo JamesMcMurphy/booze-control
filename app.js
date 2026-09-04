@@ -2,7 +2,7 @@ const KEY='booze-control-v1';
 const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
 let state=load(); let month=9; let selectedDay=null;
 
-function blank(){return {entries:[],staged:{day:'',drinks:[]},warningDay:''}}
+function blank(){return {entries:[],staged:{day:'',drinks:[]},warningDay:'',favoriteQuickPage:0}}
 function normalizeState(raw){
   const base={...blank(),...(raw||{})};
   base.entries=(base.entries||[]).map(e=>({...e,amount:Number(e.amount)>0?Number(e.amount):1}));
@@ -10,6 +10,7 @@ function normalizeState(raw){
   base.staged.day=base.staged.day||'';
   base.staged.drinks=(base.staged.drinks||[]).map(d=>typeof d==='string'?{name:d,amount:1}:{name:d.name,amount:Number(d.amount)>0?Number(d.amount):1});
   base.warningDay=base.warningDay||'';
+  base.favoriteQuickPage=(base.favoriteQuickPage===1?1:0);
   return base;
 }
 function load(){try{return normalizeState(JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{return blank()}}
@@ -31,6 +32,39 @@ function grouped(list){
   return [...m].sort((a,b)=>a[0].localeCompare(b[0]));
 }
 function countDay(day){return committedUnits(day)}
+let currentQuickPage=(state.favoriteQuickPage===1?1:0);
+function updateQuickPageUI(){
+  const tab0=$('#quickTab0'),tab1=$('#quickTab1'),favorite=$('#favoriteQuickPage');
+  if(!tab0||!tab1||!favorite)return;
+  tab0.classList.toggle('active',currentQuickPage===0);
+  tab1.classList.toggle('active',currentQuickPage===1);
+  const isFavorite=(state.favoriteQuickPage===currentQuickPage);
+  favorite.classList.toggle('active',isFavorite);
+  favorite.textContent=isFavorite?'★':'☆';
+}
+function showQuickPage(page,smooth=true){
+  const carousel=$('#quickCarousel');
+  currentQuickPage=Math.max(0,Math.min(1,Number(page)||0));
+  updateQuickPageUI();
+  if(!carousel)return;
+  const left=carousel.clientWidth*currentQuickPage;
+  if(smooth && typeof carousel.scrollTo==='function') carousel.scrollTo({left,behavior:'smooth'});
+  else carousel.scrollLeft=left;
+}
+function syncQuickPageFromScroll(){
+  const carousel=$('#quickCarousel');
+  if(!carousel)return;
+  const width=Math.max(1,carousel.clientWidth);
+  const page=Math.max(0,Math.min(1,Math.round(carousel.scrollLeft/width)));
+  if(page!==currentQuickPage){currentQuickPage=page;updateQuickPageUI();}
+}
+function favoriteCurrentQuickPage(){
+  state.favoriteQuickPage=currentQuickPage;
+  save();
+  updateQuickPageUI();
+  const t=$('#toast');
+  if(t){t.textContent=`${currentQuickPage===0?'Classics':'Staples'} will open first ★`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),950);}
+}
 function renderWarning(){const banner=$('#bacWarning');if(!banner)return;banner.classList.toggle('show',warningActive())}
 function renderHome(){
   const sc=stagedUnits(),submitted=countDay(trackingDay());
@@ -65,8 +99,13 @@ function switchScreen(name){$$('.screen').forEach(x=>x.classList.remove('active'
 function toast(amount=1){const t=$('#toast');t.textContent=`Added ${fmt(amount)} ✓`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),800)}
 
 $$('.quick-card[data-drink]').forEach(b=>b.onclick=()=>stage(b.dataset.drink,Number(b.dataset.amount||1)));
+$('#quickTab0').onclick=()=>showQuickPage(0,true);
+$('#quickTab1').onclick=()=>showQuickPage(1,true);
+$('#favoriteQuickPage').onclick=()=>favoriteCurrentQuickPage();
 $('#bacardiFull').onclick=()=>stage('Bacardi Shot',1);
 $('#bacardiHalf').onclick=()=>stage('Bacardi Shot',0.5);
+$('#rumpleFull').onclick=()=>stage('Rumple',1);
+$('#rumpleHalf').onclick=()=>stage('Rumple',0.5);
 $('#otherAdd').onclick=()=>{stage($('#otherInput').value,1);$('#otherInput').value=''};
 $('#otherInput').addEventListener('keydown',e=>{if(e.key==='Enter'){$('#otherAdd').click();e.target.blur()}});
 $('#submitBtn').onclick=()=>commitStaged();
@@ -74,5 +113,32 @@ $('#homeTab').onclick=()=>switchScreen('home');$('#calendarTab').onclick=()=>swi
 $('#prevMonth').onclick=()=>{if(month>9){month--;renderCalendar()}};$('#nextMonth').onclick=()=>{if(month<12){month++;renderCalendar()}};
 $('#closeDetail').onclick=closeDetail;$('#detailOverlay').addEventListener('click',e=>{if(e.target.id==='detailOverlay')closeDetail()});
 setInterval(()=>{autoSubmit();renderHome()},30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden){autoSubmit();render()}});
+const quickCarousel=$('#quickCarousel');
+if(quickCarousel){
+  let scrollTimer=null;
+  let touchStartX=0;
+  let touchStartY=0;
+  quickCarousel.addEventListener('scroll',()=>{
+    syncQuickPageFromScroll();
+    clearTimeout(scrollTimer);
+    scrollTimer=setTimeout(syncQuickPageFromScroll,70);
+  },{passive:true});
+  quickCarousel.addEventListener('touchstart',e=>{
+    const t=e.touches&&e.touches[0]; if(!t)return;
+    touchStartX=t.clientX; touchStartY=t.clientY;
+  },{passive:true});
+  quickCarousel.addEventListener('touchend',e=>{
+    const t=e.changedTouches&&e.changedTouches[0]; if(!t)return;
+    const dx=t.clientX-touchStartX,dy=t.clientY-touchStartY;
+    if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.15){
+      showQuickPage(dx<0?Math.min(1,currentQuickPage+1):Math.max(0,currentQuickPage-1),true);
+    }else{
+      syncQuickPageFromScroll();
+    }
+  },{passive:true});
+  if('onscrollend' in quickCarousel) quickCarousel.addEventListener('scrollend',syncQuickPageFromScroll,{passive:true});
+  window.addEventListener('resize',()=>showQuickPage(currentQuickPage,false));
+}
 render();
+requestAnimationFrame(()=>showQuickPage(state.favoriteQuickPage===1?1:0,false));
 if('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
